@@ -48,7 +48,7 @@ class Restaurant(models.Model):
     # MyUser = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.resno},{self.res_nm},{self.tel}"
+        return f"{self.resno},{self.res_name},{self.tel}"
 
 
 class RestaurantOperTime(models.Model):
