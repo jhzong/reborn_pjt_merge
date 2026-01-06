@@ -1,37 +1,37 @@
 from django.db import models
-# from member.models import MyUser
+from member.models import MyUser
 
-# class Location(models.Model):
-#     locno = models.AutoField(primary_key=True)
-#     loc_nm = models.CharField(max_length=50, null=True)
-#     is_main = models.CharField(max_length=1, default="n", null=True)
-#     sort = models.IntegerField(default=0)
+class Location(models.Model):
+    locno = models.AutoField(primary_key=True)
+    loc_nm = models.CharField(max_length=50, null=True)
+    is_main = models.CharField(max_length=1, default="n", null=True)
+    sort = models.IntegerField(default=0)
 
-#     def __str__(self):
-#         return f"{self.locno},{self.loc},{self.is_main},{self.sort}"
-
-
-# class LocationDetail(models.Model):
-#     locdno = models.AutoField(primary_key=True)
-#     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
-#     locd_nm = models.CharField(max_length=50, null=True)
-#     is_main = models.CharField(max_length=1, null=True)
-#     sort = models.IntegerField(default=0)
-
-#     def __str__(self):
-#         return f"{self.locdno},{self.location_id},{self.locd_nm},{self.is_main},{self.sort}"
+    def __str__(self):
+        return f"{self.locno},{self.loc_nm},{self.is_main},{self.sort}"
 
 
+class LocationDetail(models.Model):
+    locdno = models.AutoField(primary_key=True)
+    location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
+    locd_nm = models.CharField(max_length=50, null=True)
+    is_main = models.CharField(max_length=1, null=True)
+    sort = models.IntegerField(default=0)
 
-# class FoodType(models.Model):
-#     ftypeno = models.AutoField(primary_key=True)
-#     ftype = models.CharField(max_length=50, null=True)
-#     img_url_main = models.TextField(blank=True, null=True)
-#     is_main = models.CharField(max_length=1, default="n", null=True)
-#     sort = models.IntegerField(default=0)
+    def __str__(self):
+        return f"{self.locdno},{self.location.locno},{self.locd_nm},{self.is_main},{self.sort}"
 
-#     def __str__(self):
-#         return f"{self.ftypeno},{self.ftype},{self.is_main},{self.sort}"
+
+
+class FoodType(models.Model):
+    ftypeno = models.AutoField(primary_key=True)
+    ftype = models.CharField(max_length=50, null=True)
+    img_url_main = models.TextField(blank=True, null=True)
+    is_main = models.CharField(max_length=1, default="n", null=True)
+    sort = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.ftypeno},{self.ftype},{self.is_main},{self.sort}"
 
 
 # class Restaurant(models.Model):
