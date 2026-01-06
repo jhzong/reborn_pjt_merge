@@ -365,7 +365,7 @@ $(document).ready(function() {
                         <div class="checkbox-button">
                             <input type="checkbox" id="zone_{{ loc.locno }}" name="locno" value="{{ loc.locno }}" onchange="toggleDetailView(this)"
                                 {% if loc.locno|stringformat:"s" in checked_locno %}checked{% endif %}>
-                            <label for="zone_{{ loc.locno }}">{{ loc.loc }}</label>
+                            <label for="zone_{{ loc.locno }}">{{ loc.loc_nm }}</label>
                         </div>
                     {% endfor %}
 

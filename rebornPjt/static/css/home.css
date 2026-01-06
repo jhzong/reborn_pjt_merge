@@ -65,11 +65,15 @@
 
 .search-icon {
   position: absolute;
-  left: 25px;
+  left: 16px;
   top: 53%;
   transform: translateY(-50%);
   pointer-events: none;
   opacity: 0.6;
+}
+
+.search-icon img {
+    width: 25px;
 }
 
 .search-box button {
