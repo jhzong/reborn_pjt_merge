@@ -54,7 +54,7 @@
 {% block script %}
 <script>
     //검색버튼
-    function searchData() {
+    function searchBtn() {
         let url = "/restaurants/reslist";
         location.href = url+"?"+$("#searchForm").serialize()+"&"+searchPopfrm;
     }
@@ -227,12 +227,12 @@
     </h1>
     <form class="search-box" id="searchForm">
       <span class="search-icon"><img src='/static/images/magazine/search_icon.png'></span>
-      <input type="text" id="res_name" name="search" placeholder="음식점 이름을 검색해보세요." onkeyup="if(window.event.keyCode==13){searchData()}"/>
+      <input type="text" id="res_name" name="search" placeholder="음식점 이름을 검색해보세요." onkeyup="if(window.event.keyCode==13){searchBtn()}"/>
       <a class="filter-icon-button" data-toggle="modal" data-target="#modal-filter" id="filterBtn">
         <div class="filter-count off">1</div>
         <img src="/static/images/home/icon_filter_off.png" class="filterBtnImg" alt="필터 아이콘" />
       </a>
-      <button type="button" onclick="searchData();">검색</button>
+      <button type="button" onclick="searchBtn();">검색</button>
     </form>
   </div>
 </div>
