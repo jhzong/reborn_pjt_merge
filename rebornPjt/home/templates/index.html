@@ -196,7 +196,7 @@
     $(document).ready(function() {
         //검색필터 적용
         $(document).on("click", ".btn-apply-filter", function () {
-            $("#res_nm").val($("input[name='searchResNm']").val()); //메인 음식점 검색에 적용
+            $("#res_name").val($("input[name='searchResNm']").val()); //메인 음식점 검색에 적용
             searchPopfrm = $("#searchPopFrm").serialize();
 
             count = updateFilterCount();    //10개이상인 경우 원형태가 늘어나서 이상함.
@@ -214,7 +214,7 @@
 
         //검색필터팝업 버튼 클릭
         $('#filterBtn').on('click', function(){
-            searchPopfrm += "&res_nm=" + $("#res_nm").val(); // 추가 값 붙이기
+            searchPopfrm += "&search=" + $("#res_name").val(); // 추가 값 붙이기
             SearchFilterModal('modal-filter', 'filterBtn', searchPopfrm);
         });
     });
@@ -228,7 +228,7 @@
     </h1>
     <form class="search-box" id="searchForm">
       <span class="search-icon"><img src='/static/images/magazine/search_icon.png'></span>
-      <input type="text" id="res_nm" name="res_nm" placeholder="음식점 이름을 검색해보세요." />
+      <input type="text" id="res_name" name="search" placeholder="음식점 이름을 검색해보세요." onkeyup="if(window.event.keyCode==13){searchData()}"/>
       <a class="filter-icon-button" data-toggle="modal" data-target="#modal-filter" id="filterBtn">
         <div class="filter-count off">1</div>
         <img src="/static/images/home/icon_filter_off.png" class="filterBtnImg" alt="필터 아이콘" />
