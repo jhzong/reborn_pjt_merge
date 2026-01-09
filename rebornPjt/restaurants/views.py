@@ -71,7 +71,7 @@ def reslist(request):
     
     qs = qs.distinct()
     # qs = qs.filter(q).distinct()
-    params = []     # 맵으로 
+    params = []     # 맵으로 반복 빼려면 홈쪽에서 팝업 전달 수정 필요
     for key in request.GET:
         if key not in ['page', 'search']:   # 페이지, 검색만 제외하고 hidden으로 넘겨줌
             for value in request.GET.getlist(key):
