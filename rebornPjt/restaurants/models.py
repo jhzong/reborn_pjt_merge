@@ -21,10 +21,17 @@ class LocationDetail(models.Model):
     def __str__(self):
         return f"{self.locdno},{self.locd_nm},{self.is_main},{self.sort}"
 
+class FoodCategory(models.Model):
+    fcatno = models.AutoField(primary_key=True)
+    food_cat = models.CharField(max_length=200, null=True)
+    sort = models.IntegerField(default=0)
 
+    def __str__(self):
+        return f"{self.fcatno},{self.food_cat},{self.sort}"
 
 class FoodType(models.Model):
     ftypeno = models.AutoField(primary_key=True)
+    foodCategory = models.ForeignKey(FoodCategory, on_delete=models.SET_NULL, null=True, blank=True)
     ftype = models.CharField(max_length=50, null=True)
     img_url_main = models.TextField(blank=True, null=True)
     is_main = models.CharField(max_length=1, default="n", null=True)

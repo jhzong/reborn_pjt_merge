@@ -225,7 +225,7 @@
     <h1>
       <h1 class="r_logo"><i class="fa-solid fa-utensils"></i> 미식 가이드</h1>
     </h1>
-    <form class="search-box" id="searchForm">
+    <form class="search-box" id="searchForm" onsubmit="return false;">
       <span class="search-icon"><img src='/static/images/magazine/search_icon.png'></span>
       <input type="text" id="res_name" name="search" placeholder="음식점 이름을 검색해보세요." onkeyup="if(window.event.keyCode==13){searchBtn()}"/>
       <a class="filter-icon-button" data-toggle="modal" data-target="#modal-filter" id="filterBtn">
