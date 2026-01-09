@@ -13,6 +13,10 @@
         alert('검색버튼 클릭됨');
         searchFrm.submit();
     }//searchBtn()
+
+    function searchPage(page){
+        location.href = "/restaurants/reslist/?"+$("#searchFrm").serialize()+"&page="+page;
+    }
 </script>
 {% endblock script %}
 
@@ -21,18 +25,21 @@
 
 
 
-<form action="/restaurants/reslist/" method="get" name="searchFrm">
+<form action="/restaurants/reslist/" method="get" id="searchFrm" name="searchFrm">
 <div class='rest-header_bg'>
     <div class='rest-header'>
         <div class="search-container">
             <div class="search-box">
                 <span class="search-icon"><img src='/static/images/restaurants/search_icon.png'></span>
-                <input type="text" name="search" placeholder="검색어를 입력하세요."/>
+                <input type="text" name="search" value="{{search}}" placeholder="검색어를 입력하세요."/>
             </div>
             <button class="search-btn" onclick="searchBtn()">검색</button>
         </div>
     </div>
 </div>
+{% for param in params %}
+<input type="hidden" name="{{ param.key }}" value="{{ param.value }}">
+{% endfor %}
 </form>
 <main class="rest_container">
 
@@ -59,8 +66,8 @@
     <div class="allPageMoving1">
         <!-- 이전페이지 -->
         {% if list.has_previous %}
-        <a href="/restaurants/reslist/?page=1" class="n"><img src="/static/images/common/btn_pre2.gif" alt="처음으로"/></a>
-        <a href="/restaurants/reslist/?page={{list.previous_page_number}}" class="pre"><img src="/static/images/common/btn_pre1.gif" alt="앞페이지로"/></a>
+        <a onclick="searchPage(1)" class="n"><img src="/static/images/common/btn_pre2.gif" alt="처음으로"/></a>
+        <a onclick="searchPage({{list.previous_page_number}})" class="pre"><img src="/static/images/common/btn_pre1.gif" alt="앞페이지로"/></a>
         {% else %}
         <a class="n"><img src="/static/images/common/btn_pre2.gif" alt="처음으로"/></a>
         <a class="pre"><img src="/static/images/common/btn_pre1.gif" alt="앞페이지로"/></a>
@@ -72,15 +79,15 @@
                 {% if p == page %}
                 <strong>{{p}}</strong>
                 {% else %}
-                <a href="/restaurants/reslist/?page={{p}}">{{p}}</a>
+                <a onclick="searchPage({{p}})">{{p}}</a>
                 {% endif %}
             {% endif %}
         {% endfor %}
         
         <!-- 다음페이지-->
         {% if list.has_next %}
-        <a href="/restaurants/reslist/?page={{list.next_page_number}}" class="next"><img src="/static/images/common/btn_next1.gif" alt="뒤페이지로"/></a>
-        <a href="/restaurants/reslist/?page={{list.paginator.num_pages}}" class="n"><img src="/static/images/common/btn_next2.gif" alt="마지막페이지로"/></a>
+        <a onclick="searchPage({{list.next_page_number}})" class="next"><img src="/static/images/common/btn_next1.gif" alt="뒤페이지로"/></a>
+        <a onclick="searchPage({{list.paginator.num_pages}})" class="n"><img src="/static/images/common/btn_next2.gif" alt="마지막페이지로"/></a>
         {% else %}
         <a class="next"><img src="/static/images/common/btn_next1.gif" alt="뒤페이지로"/></a>
         <a class="n"><img src="/static/images/common/btn_next2.gif" alt="마지막페이지로"/></a>
