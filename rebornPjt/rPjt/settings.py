@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'store',
     'restaurants',
     'member',
+    'mypage',    
 ]
 
 MIDDLEWARE = [

@@ -4,52 +4,49 @@
 body { 
     margin: 0; 
     padding: 0;
-    background-color: #f5f5f5; /* 페이지 전체 배경 (연회색) */
+    background-color: #f5f5f5; 
     font-family: 'Pretendard', -apple-system, sans-serif; 
     color: #333;
 }
 
 /* ============================================================
-   2. 상단 배너 영역 (이미지 포함)
+   2. 상단 배너 영역
    ============================================================ */
 .top-hero {
-    /* 배경 이미지와 어두운 그라데이션 중첩 */
     background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
                       url('../images/common/back_community.jpg'); 
-    
-    background-size: cover;      /* 이미지가 꽉 차게 */
-    background-position: center; /* 정중앙 기준 */
+    background-size: cover; 
+    background-position: center; 
     background-repeat: no-repeat;
-    height: 245px;               /* 배너의 고정 높이 */
+    height: 245px; 
     width: 100%;
 }
 
 /* ============================================================
-   3. 메인 컨테이너 (흰색 게시판 박스)
+   3. 메인 컨테이너
    ============================================================ */
 .main-container {
-    max-width: 1100px;           /* 게시판의 최대 너비 */
-    margin: -100px auto 50px;    /* 위로 100px 끌어올려 배너와 겹치게 함 */
-    background: #ffffff;         /* 박스 배경색 */
-    border-radius: 20px;         /* 모서리 둥글게 */
-    padding: 40px 50px;          /* 안쪽 여백 */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* 부드러운 그림자 효과 */
-    position: relative;          /* 위치 기준점 */
-    z-index: 10;                 /* 배너보다 위에 보이게 설정 */
+    max-width: 1100px; 
+    margin: -100px auto 50px; 
+    background: #ffffff; 
+    border-radius: 20px; 
+    padding: 40px 50px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+    position: relative; 
+    z-index: 10; 
 }
-.header-left .title strong{
-    color:#042e5c;
-}
+.header-left .title strong { color:#042e5c; }
+
 .header-left .title {
     font-size: 35px;
     font-weight: 500; /* 전체적으로 부드럽게 */
     color: #333;
     letter-spacing: -0.03em;
 }
+
 /* ============================================================
    4. 헤더 및 탭 메뉴
    ============================================================ */
-/* 상단 제목과 검색창 가로 배치 */
 .board-header { 
     display: flex; 
     justify-content: space-between; 
@@ -57,7 +54,6 @@ body {
     padding-bottom: 20px; 
 }
 
-/* 탭 메뉴 스타일 */
 .tab-menu { 
     display: flex; 
     gap: 20px; 
@@ -71,14 +67,51 @@ body {
     padding-bottom: 10px; 
 }
 
-/* 선택된 탭 강조 (블루리본 시그니처 컬러) */
 .tab-menu a.active { 
     color: #003366; 
     border-bottom: 3px solid #003366; 
 }
 
 /* ============================================================
-   5. 검색창 및 버튼
+   5. 필터 및 글쓰기 버튼 레이아웃 (한 줄 정렬)
+   ============================================================ */
+.filter-and-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 19px 0;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-buttons .btn {
+    padding: 10px 20px;
+    border: 1px solid #eee;
+    border-radius: 50px; /* 알약 모양 */
+    text-decoration: none;
+    color: #444;
+    display: inline-flex;
+    align-items: center;
+    background-color: #fff;
+    font-size: 14px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* 은은한 그림자 */
+}
+
+.filter-buttons .btn.active {
+    background-color: #042e5c;
+    color: white;
+    border-color: #042e5c;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(4, 46, 92, 0.2);
+}
+
+/* ============================================================
+   6. 검색창 및 글쓰기 버튼
    ============================================================ */
 /* 기본 디자인 틀은 유지하되 애니메이션 속성(transition)을 추가했습니다 */
 .search-box { 
@@ -136,43 +169,97 @@ body {
     transform: scale(1.1); /* 돋보기(글자)가 살짝 커지는 효과 */
 }
 
-/* 글쓰기 버튼 */
+/* ⭐ 정렬 버튼과 글쓰기 버튼을 묶어주는 컨테이너 (틀 유지용) */
+.action-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;          /* 정렬 버튼과 글쓰기 버튼 사이의 간격 */
+    margin-left: auto;  /* 중요: 왼쪽의 모든 공간을 차지하여 오른쪽 끝으로 밀어냄 */
+}
+
+/* 최신순 | 인기순 그룹 */
+.sort-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 고정 */
+}
+
+.btn-sort {
+    font-size: 14px;
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-sort.active {
+    color: #333;
+    font-weight: bold;
+}
+
+.sort-divider {
+    color: #eee;
+    font-size: 12px;
+}
+
 .btn-write {
-    background-color: #526379; /* 구글 스타일의 세련된 블루 또는 메인 포인트 컬러 */
+    background-color: #526379;
     color: white;
     padding: 10px 24px;
     border: none;
-    border-radius: 30px; /* 완전히 둥근 모양으로 변경 */
+    border-radius: 30px; /* 알약 모양 */
     font-size: 14px;
     font-weight: 600;
+    text-decoration: none;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 6px rgba(26, 115, 232, 0.2); /* 은은한 푸른빛 그림자 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 강화 */
+    white-space: nowrap; /* 글자 줄바꿈 방지 */
 }
 
-.btn-write:hover {
-    background-color: #0a3977;
-    transform: translateY(-2px); /* 살짝 떠오르는 효과 */
-    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+.btn-write:hover { 
+    background-color: #0a3977; 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
-
 /* ============================================================
-   6. 게시글 리스트 아이템
+   7. 게시글 리스트 (태그+제목 한 줄 정렬)
    ============================================================ */
+/* 7. 게시글 리스트 영역 */
 .post-item { 
-    padding: 10px 0; 
+    padding: 15px 0; /* 위아래 여백 살짝 조절 */
     border-bottom: 1px solid #f0f0f0; 
+    display: flex;             /* ⭐ 가로 정렬 시작 */
+    justify-content: space-between; /* ⭐ 좌측 텍스트와 우측 사진을 양끝으로 배치 */
+    align-items: center;       /* ⭐ 세로 중앙 정렬 */
+}
+
+/* 왼쪽 텍스트 정보들을 묶어주는 공간 */
+.post-info {
+    flex: 1;                   /* ⭐ 사진 공간을 제외한 나머지 왼쪽 전체 차지 */
+    display: flex;
+    flex-direction: column;    /* 태그-제목-메타 정보를 위아래로 나열 */
+}
+
+/* 태그와 제목이 한 줄에 나오게 하려면 이 그룹을 사용 */
+.post-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .post-title { 
-    display: block; 
     font-size: 18px; 
     color: #333; 
     text-decoration: none; 
-    margin: 8px 0; 
+    font-weight: 500;
+    transition: 0.2s;
 }
 
-/* 공지사항 텍스트 강조 */
+.post-title:hover { color: #00acc1; }
+
+/* 공지사항 맛집지도 텍스트 강조 */
 .notice .post-title { 
     color: #022950; 
     font-size: 18px; 
@@ -181,29 +268,37 @@ body {
 .post-meta {
     font-size: 12px;
     color: #999;
-    margin-top: 5px;
+    margin-top: 8px;
     display: flex;
     align-items: center;
-    gap: 5px; /* 항목 간 일정한 간격 유지 */
+    gap: 8px;
 }
 
-/* 하트 색상이 너무 튀지 않게 조정하고 싶다면 */
-.post-meta span {
-    display: inline-flex;
-    align-items: center;
-}
 /* 태그 스타일 */
 .tag { 
     color: #00acc1; 
     border: 1px solid #00acc1; 
-    padding: 2px 8px; 
+    padding: 2px 10px; 
     border-radius: 15px; 
     font-size: 11px; 
-    margin-right: 5px; 
+    font-weight: bold;
+    white-space: nowrap; /* 태그 글자 줄바꿈 방지 */
 }
 
+/* ⭐ 우측 썸네일 사진 스타일 */
+.post-thumbnail {
+    margin-left: 20px;
+}
+
+.post-thumbnail img {
+    width: 85px;
+    height: 85px;
+    object-fit: cover;    /* 사진 비율 유지하며 꽉 채움 */
+    border-radius: 10px;  /* 모서리 둥글게 */
+    border: 1px solid #eee;
+}
 /* ============================================================
-   7. 페이지네이션 (하단 숫자)
+   8. 페이지네이션
    ============================================================ */
 .pagination {
     margin-top: 40px;

@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from .models import Post, Comment
-from django.db.models import Q # 검색 조건을 위해 필요합니다
+from .models import Post, Comment, PostImage
+from django.db.models import F, Q # 검색 조건을 위해 필요합니다
 
 # 게시판 리스트는 누구나 볼 수 있음
 def blist(request):
@@ -80,102 +80,155 @@ def bwrite(request):
 
 # 게시글 상세보기
 def bview(request, bno):
-    # 1. bno(ID)에 해당하는 글을 가져옵니다. (없으면 404 에러)
-    from django.shortcuts import get_object_or_404
+    # 1. bno(ID)에 해당하는 글을 가져옵니다.
     post = get_object_or_404(Post, id=bno)
+    print(f"--- 현재 카테고리: [{post.category}] ---")
     
     # 2. 조회수 중복 방지 로직 (세션 활용)
-    # 세션에서 'viewed_posts'라는 이름의 리스트를 가져옵니다. 없으면 빈 리스트([]) 생성.
     viewed_posts = request.session.get('viewed_posts', [])
 
     if bno not in viewed_posts:
-        # 이 게시글을 처음 보는 경우에만 조회수 +1
         post.views += 1
         post.save()
-        
-        # 주머니(리스트)에 현재 게시글 번호를 추가
         viewed_posts.append(bno)
-        # 업데이트된 리스트를 다시 세션에 저장
         request.session['viewed_posts'] = viewed_posts
-        # 세션 데이터가 변경되었음을 장고에 알림
         request.session.modified = True
         
+    # 3. 카테고리별 글 목록 미리보기 로직 추가
+    # 현재 게시글과 같은 카테고리의 모든 글을 최신순으로 가져옵니다.
+    all_category_posts = Post.objects.filter(category=post.category).order_by('-created_at')
+    
+    # Paginator 세팅: 한 페이지에 5개씩 보여줌
+    paginator = Paginator(all_category_posts, 5)
+    page_number = request.GET.get('page', 1) # URL에 page 파라미터가 없으면 1페이지
+    posts_in_category = paginator.get_page(page_number)
 
-    # 이전글 (더 최신글): 현재보다 작성 시간이 큰(미래) 글 중 가장 오래된 것
+    # 이전글 (더 최신글)
     prev_post = Post.objects.filter(
-        category=post.category, # ⭐ 현재 글과 같은 카테고리만!
+        category=post.category,
         created_at__gt=post.created_at
     ).order_by('created_at').first()
 
-    # 다음글 (더 예전글): 현재보다 작성 시간이 작은(과거) 글 중 가장 최신 것
+    # 다음글 (더 예전글)
     next_post = Post.objects.filter(
-        category=post.category, # ⭐ 현재 글과 같은 카테고리만!
+        category=post.category,
         created_at__lt=post.created_at
     ).order_by('-created_at').first()
     
     # 해당 게시글에 달린 댓글들 가져오기
     comments = post.comments.all().order_by('-created_at')
     
+    # context에 posts_in_category 추가
     context = {
         'post': post,
         'prev_post': prev_post,
         'next_post': next_post,
         'comments': comments,
+        'posts_in_category': posts_in_category, # 템플릿에서 리스트 출력용
     }
 
-    
     # 4. 카테고리에 따른 템플릿 분기 처리
     if post.category == 'notice':
-        return render(request, 'board/nview.html', context) # 공지사항용
+        return render(request, 'board/nview.html', context)
+    elif post.category == 'map':
+        return render(request, 'board/mview.html', context)
     else:
-        return render(request, 'board/bview.html', context)  # 일반 게시판용
-
+        return render(request, 'board/bview.html', context)
 # -----------------------------------------------------------------------------------------------
 
 
 def bupdate(request, bno):
-    # 수정할 게시글 데이터를 가져옵니다.
-    # post = get_object_or_404(Post, bno=bno) 
     post = get_object_or_404(Post, id=bno)
     
     if request.method == "POST":
-        # 사용자가 수정한 내용을 저장하는 로직
         post.title = request.POST.get('title')
         post.content = request.POST.get('content')
-        # ... 필요한 필드들 업데이트 ...
         post.save()
-        return redirect('board:bview', bno=post.id)
+        
+        # 2. 사진 수정 로직 추가
+        new_images = request.FILES.getlist('images')  # 수정 폼에서 보낸 이미지들
+        if new_images:
+            # 기존 사진들을 DB에서 삭제 (실제 파일까지 삭제하려면 별도 처리가 필요하지만 일단 DB 삭제)
+            post.images.all().delete() 
+            
+            # 새로 받은 사진들 저장
+            for img in new_images:
+                PostImage.objects.create(post=post, image=img)
+        
+        
+        # [수정 후 카테고리별 이동 로직]
+        if post.category == 'notice':
+            return redirect('board:noticelist')
+        elif post.category == 'map':
+            return redirect('board:map')
+        else:
+            return redirect('board:blist')
     
-    # GET 방식일 때는 수정 페이지(HTML)를 보여줍니다.
     return redirect('board:bview', bno=post.id)
 
 def bdelete(request, bno):
-    # Post 모델에는 bno 필드가 없으므로 id 필드로 조회해야 함
     post = get_object_or_404(Post, id=bno)
     
     if request.method == "POST":
+        category = post.category  # 삭제하기 전에 카테고리를 미리 변수에 담아둡니다.
         post.delete()
-        return redirect('board:blist')
         
+        # [삭제 후 카테고리별 이동 로직]
+        if category == 'notice':
+            return redirect('board:noticelist')
+        elif category == 'map':
+            return redirect('board:map')
+        else:
+            return redirect('board:blist')
+            
     return redirect('board:bview', bno=bno)
 
 
 # -----------------------------------------------------------------------------------------------
 
 
-# 댓글 작성 로직 (대댓글 포함)
 def comment_write(request, bno):
     if request.method == "POST":
         post = get_object_or_404(Post, id=bno)
         content = request.POST.get('content')
         author = request.session.get('user_nm', '익명')
-        parent_id = request.POST.get('parent_id') # 아기 댓글일 경우 엄마 번호를 받아옴
+        parent_id = request.POST.get('parent_id')
+        
+        # ⭐ 사진 파일 가져오기
+        image = request.FILES.get('image')
 
         if content:
-            comment = Comment(post=post, content=content, author=author)
-            if parent_id: # 만약 엄마 번호가 있다면?
+            comment = Comment(
+                post=post, 
+                content=content, 
+                author=author,
+                image=image  # ⭐ 이미지 저장
+            )
+            if parent_id:
                 comment.parent = Comment.objects.get(id=parent_id)
             comment.save()
+            
+    return redirect('board:bview', bno=bno)
+
+# 댓글 수정 (사진 수정 기능 추가)
+def comment_update(request, bno, cno):
+    if request.method == "POST":
+        comment = get_object_or_404(Comment, id=cno)
+        
+        if request.session.get('user_nm') == comment.author:
+            # 1. 텍스트 내용 수정
+            comment.content = request.POST.get('content')
+            
+            # 2. ⭐ 새로운 사진이 들어왔는지 확인
+            new_image = request.FILES.get('image')
+            if new_image:
+                comment.image = new_image  # 새로운 사진으로 교체
+            
+            comment.save()
+            
+        delete_image = request.POST.get('delete_image') # HTML에서 체크박스로 보낸 값
+        if delete_image == 'on':
+            comment.image.delete() # 기존 파일 삭제 및 필드 비우기    
             
     return redirect('board:bview', bno=bno)
 
@@ -186,20 +239,6 @@ def comment_delete(request, bno, cno):
         comment.delete()
     return redirect('board:bview', bno=bno)
 
-# 댓글 수정 (간단 버전)
-def comment_update(request, bno, cno):
-    if request.method == "POST":
-        # 1. 수정할 댓글을 찾아요
-        comment = get_object_or_404(Comment, id=cno)
-        
-        # 2. 내 글이 맞는지 확인해요 (세션 이름 확인)
-        if request.session.get('user_nm') == comment.author:
-            # 3. 새로 쓴 내용을 가져와서 저장해요
-            comment.content = request.POST.get('content')
-            comment.save()
-            
-    # 4. 일이 끝나면 다시 보던 게시글 페이지로 돌아가요
-    return redirect('board:bview', bno=bno)
 
 
 
@@ -250,7 +289,7 @@ def post_like(request, bno):
 def noticelist(request):
     # 1. 모든 게시글을 가져온다. (변수명을 posts로 통일)
     # 모든 게시글을 최신순(ID 역순)으로 가져옵니다.
-    all_posts = Post.objects.filter(category='notice').order_by('-created_at')
+    all_posts = Post.objects.filter(category='notice').order_by('-is_notice','-created_at')
     # 검색어 가져오기
     search_kw = request.GET.get('search', '') # name="search"로 보낸 값
     # 검색어가 있다면 제목에서 검색
@@ -287,7 +326,8 @@ def nwrite(request):
         # 폼에서 넘겨준 데이터 받기
         title = request.POST.get('title')    # 제목
         content = request.POST.get('content') # 내용
-        # category = request.POST.get('category') # 주제 선택
+        category = request.POST.get('category', 'notice')
+        writer_nm = request.session.get('user_nm')
         # author = request.session.get('user_nm') # 세션에 저장된 닉네임 사용
         
         # 데이터가 잘 들어왔는지 확인용 (터미널에 찍힘)
@@ -311,3 +351,93 @@ def nwrite(request):
         return redirect('board:noticelist') # 저장 후 다시 리스트로 이동
 
     return render(request, 'board/nwrite.html')
+
+
+
+# -----------------------------------------------------------------------------------------------
+#                                     맛집지도 페이지
+# -----------------------------------------------------------------------------------------------
+
+
+def map(request):
+    # 1. 맛집 기본 필터링 (정렬은 마지막에 한 번만 수행)
+    all_posts = Post.objects.filter(category='map')
+
+    # 2. 카테고리(topic) 리스트 가져오기
+    topic_list = Post.objects.filter(category='map').values_list('topic', flat=True).distinct()
+
+    # 3. 파라미터 가져오기
+    topic_filter = request.GET.get('topic', '') 
+    search_kw = request.GET.get('search', '')
+    sort = request.GET.get('sort', 'recent') # 정렬 파라미터
+
+    # 4. 주제 및 검색어 필터링
+    if topic_filter:
+        all_posts = all_posts.filter(topic=topic_filter)
+
+    if search_kw:
+        all_posts = all_posts.filter(
+            Q(title__icontains=search_kw) | Q(content__icontains=search_kw)
+        ).distinct()
+
+    # 5. 정렬 처리 (페이징 직전에 수행해야 함)
+    if sort == 'likes':
+        # Post 모델에 'likes' 필드가 실제 있는지 확인하세요. 
+        # 만약 필드명이 다르면 그 이름으로 바꿔야 합니다.
+        all_posts = all_posts.annotate(
+            total_score=F('views') + F('likes')
+        ).order_by('-total_score', '-id') # ID는 동점자 처리용
+    else:
+        # 최신순
+        all_posts = all_posts.order_by('-created_at')
+
+    # 6. 페이징 처리
+    paginator = Paginator(all_posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'board/map.html', {
+        'posts': page_obj,
+        'search_kw': search_kw,
+        'current_topic': topic_filter,
+        'topic_list': topic_list,
+        'sort': sort, # HTML에서 active 표시용
+    })
+
+def mwrite(request):
+    # 문지기 대신 우리가 직접 세션 장부를 확인합니다.
+    if not request.session.get('login_user'):
+        # 장부에 이름이 없으면? 로그인 페이지로 보냅니다.
+        return redirect('member:login')
+
+    if request.method == "POST":
+        # 폼에서 넘겨준 데이터 받기
+        title = request.POST.get('title')    # 제목
+        content = request.POST.get('content') # 내용
+        image = request.FILES.get('image') # ⭐ 이미지 가져오기
+        
+        # HTML의 <select name="category">에서 값을 가져오므로 'category'로 받아야 합니다.
+        topic = request.POST.get('category') 
+        
+        # 세션에서 작성자 정보 가져오기
+        writer_nm = request.session.get('user_nm')
+
+        # DB에 저장
+        post = Post.objects.create(
+            title=title,
+            content=content,
+            topic=topic,      # 'free', 'hidden_gem' 등이 저장됩니다.
+            author=writer_nm,
+            category='map',   # 맛집지도 게시판 구분값
+            
+        )
+        
+        # 2. 여러 장의 이미지를 가져와서 하나씩 저장합니다.
+        images = request.FILES.getlist('images') # HTML의 name="images"와 일치해야 함
+        for img in images:
+            PostImage.objects.create(post=post, image=img)
+
+        return redirect('board:map')
+        
+
+    return render(request, 'board/mwrite.html')
