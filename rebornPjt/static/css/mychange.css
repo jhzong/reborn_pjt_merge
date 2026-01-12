@@ -6,7 +6,8 @@
 
 .top-hero {
     height: 200px;
-    background: #2c3e50;
+    /* background: #2c3e50; */
+    background:url('/static/images/common/back_ribbon.jpg') center/cover no-repeat;
 }
 
 .main-container {

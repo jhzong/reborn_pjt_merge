@@ -20,8 +20,11 @@
     <div class="main-container">
         <aside class="sidebar">
             <ul class="side-menu">
-                <li class="active"><a href="#">정보수정</a></li>
-                <li><a href="/mypage/myaccount/">회원탈퇴</a></li>
+                <li class="active"><a href="#">개인정보</a></li>
+                <li><a href="/mypage/myaccount/">계정관리</a></li>
+                {% if request.session.user_id == 'admin' %}
+                    <li><a href="/magazine/mmnge/">매거진관리</a></li>
+                {% endif %}                
             </ul>
         </aside>
 
@@ -90,7 +93,7 @@
                         <input type="text" name="detail_addr" id="detail_addr" class="input-field mt-8" value="{{ user.detail_addr }}" placeholder="상세 주소">
                     </div>
 
-                    <button type="submit" class="btn-submit" onclick="/member/login/">수정완료</button>
+                    <button type="button" class="btn-submit" onclick="submitEditForm()">수정완료</button>
                 </form> </div>
         </main>
     </div>
