@@ -8,7 +8,39 @@
 
 {% comment %} script 작업은 여기서 하세요!! {% endcomment %}
 {% block script %}
-<script src="/static/js/magazine.js">
+<script src="/static/js/magazine.js"></script>
+<script>
+$(function(){
+    
+    $('#mz-like').click(function(){
+
+        $.ajax({
+            url:'/magazine/mlike/',
+            type:'post',
+            headers:{'X-CSRFToken':'{{csrf_token}}'},
+            data:{'mno':'{{mz.mno}}'},
+            dataType:'json',
+            success:function(data){
+                //alert('성공');
+                console.log('result : ',data.result);
+
+                if(data.like_chk == '1'){
+                    dataHtml = `<i class="fa-solid fa-heart mz-red"></i> ${data.like_count}`;
+                }else{
+                    dataHtml = `<i class="fa-regular fa-heart"></i> ${data.like_count}`;
+                }
+
+                $('#mz-like').html(dataHtml);
+            },
+            error:function(){
+                alert('실패');
+            }
+        });//ajax
+
+    });//mz-like
+
+}); //jquery
+</script>
 {% endblock script %}
 
 {% comment %} body 작업은 여기서 하세요!! {% endcomment %}
@@ -21,7 +53,7 @@
         {% csrf_token %}
         <div id='mz-header-bg'>
             <div id='mz-htitle'>
-                Reborn 매거진
+                <i class="fa-solid fa-utensils"></i> 매거진
             </div>
             <div id='mz-hsearch'>
                 <div id='mz-hsearch-box'>
@@ -41,12 +73,27 @@
             <ul>
                 <li class='mz-vtitle-date'>{{mz.mdate|date:'Y-m-d H:i:s'}}</li>
                 <li class='mz-vtitle-list'>
-                    <!--
-                        <a href='#' id='mz-like'>
-                            <i class="fa-solid fa-heart"></i>
-                            <i class="fa-regular fa-heart"></i>
-                        </a>
-                    -->
+                    {% if request.session.user_id %}
+                    <a href='#' id='mz-like'>
+                        {% if mz.mlike.count %}
+                            <i class="fa-solid fa-heart mz-red"></i> {{mz.mlike.count}}
+                        {% else %}
+                            <i class="fa-regular fa-heart"></i> {{mz.mlike.count}}
+                        {% endif %}
+                    </a>
+                    {% else %}
+                        {% if mz.mlike.count %}
+                            <i class="fa-solid fa-heart mz-red"></i> {{mz.mlike.count}}
+                        {% else %}
+                            <i class="fa-regular fa-heart"></i> {{mz.mlike.count}}
+                        {% endif %}
+                    {% endif %}
+                    
+                    {% if mz.mhit %}
+                        &nbsp;<i class="fa-solid fa-eye mz-blue"></i> {{mz.mhit}}
+                    {% else %}
+                        &nbsp;<i class="fa-regular fa-eye"></i> {{mz.mhit}}
+                    {% endif %}
                 </li>
             </ul>
             
