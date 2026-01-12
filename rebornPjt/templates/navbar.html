@@ -23,6 +23,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 마이페이지
             </a></li>
+            {% if request.session.user_id %}
             <!-- 모바일 전용 항목 (이미 로그인한 상태라면) -->
             <li class="mobile-logout">
                 <a href="{% url 'member:logout' %}" class="small-logout-btn">
@@ -34,6 +35,7 @@
                     <span>로그아웃</span>
                 </a>
             </li>
+            {% endif %}
         </ul>
     </nav>
     <div class="user-menu">
@@ -44,7 +46,7 @@
         <!-- 로그인 후 표시될 영역 -->
         {% else %}
         <div class="user-profile">
-            <a href="/member/mypage" class="user-name"><span>{{ request.session.user_nm }}</span>님<span class="user-welcome"> 환영합니다.</span></a>
+            <a href="/mypage/mychange" class="user-name"><span>{{ request.session.user_nm }}</span>님<span class="user-welcome"> 환영합니다.</span></a>
             <!--<a href="/member/mypage" class="mypage-btn">마이페이지</a>-->
             <a href="{% url 'member:logout' %}" class="logout-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
