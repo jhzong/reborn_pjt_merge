@@ -23,7 +23,7 @@
             </div>
             <div class="header-right">
                 <form action="{% url 'board:blist' %}" method="GET" class="search-box">
-                    <input type="text" name="search" value="{{ search_kw|default:'' }}" placeholder="독자 게시판 내에서 검색해보세요.">
+                    <input type="text" name="search" value="{{ search_kw|default:'' }}" placeholder="공지사항 검색...">
                     <button type="submit">검색</button>
                 </form>
             </div>
@@ -43,7 +43,7 @@
                 
                 <a href="{% url 'board:bview' post.id %}" 
                 class="post-title {% if post.is_notice %}notice-title{% endif %}">
-                    {{ post.title }}
+                    {{ post.title }} 
                 </a>
                 
                 <div class="post-meta">

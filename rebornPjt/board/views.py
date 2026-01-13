@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import Post, Comment, PostImage
 from django.db.models import F, Q # 검색 조건을 위해 필요합니다
+from django.db.models import Case, When, Value, IntegerField
 
 # 게시판 리스트는 누구나 볼 수 있음
 def blist(request):
@@ -289,7 +290,14 @@ def post_like(request, bno):
 def noticelist(request):
     # 1. 모든 게시글을 가져온다. (변수명을 posts로 통일)
     # 모든 게시글을 최신순(ID 역순)으로 가져옵니다.
-    all_posts = Post.objects.filter(category='notice').order_by('-is_notice','-created_at')
+    all_posts = Post.objects.filter(category='notice').annotate(
+        notice_order=Case(
+            When(is_notice='1', then=Value(0)),  # 문자열 '1'인 경우
+            When(is_notice=1, then=Value(0)),    # 숫자 1인 경우
+            default=Value(1),
+            output_field=IntegerField(),
+        )
+    ).order_by('notice_order', '-created_at') # 0순위 먼저, 그 다음 최신순
     # 검색어 가져오기
     search_kw = request.GET.get('search', '') # name="search"로 보낸 값
     # 검색어가 있다면 제목에서 검색
