@@ -17,7 +17,9 @@
     function yearChartBtn(){
         //alert('yearBtn');
 
-        document.getElementById('magazineList').classList.remove('on');
+        document.getElementById('magazineList').style.color = 'gray'
+        document.getElementById('magazineList').style.backgroundColor = '#fff';
+
         document.getElementById('categorytChart').classList.remove('on');
         document.getElementById('yearChart').classList.add('on');
 
@@ -101,7 +103,9 @@
     function categorytChartBtn(){
         //alert('categorytBtn');
 
-        document.getElementById('magazineList').classList.remove('on');
+        document.getElementById('magazineList').style.color = 'gray'
+        document.getElementById('magazineList').style.backgroundColor = '#fff';
+
         document.getElementById('categorytChart').classList.add('on');
         document.getElementById('yearChart').classList.remove('on');
 
@@ -176,7 +180,9 @@
     }
 
     function magazineListBtn(){
-        document.getElementById('magazineList').classList.add('on');
+        document.getElementById('magazineList').style.color = '#fff'
+        document.getElementById('magazineList').style.backgroundColor = 'gray';
+
         document.getElementById('categorytChart').classList.remove('on');
         document.getElementById('yearChart').classList.remove('on');
         
@@ -415,8 +421,6 @@
                     <div class="modal_popup">
                     </div>
                 </div>
-
-
 
         </main>
     </div>
