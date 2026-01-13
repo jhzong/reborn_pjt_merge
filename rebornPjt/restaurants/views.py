@@ -46,19 +46,19 @@ def reslist(request):
         is_overnight = open_time > close_time
         if not is_overnight:
             q &= Q(
-                restaurantopertime__open_time__lte=open_time,
-                restaurantopertime__close_time__gte=close_time,
+                restaurantopertime__open_time__gte=open_time,
+                restaurantopertime__close_time__lte=close_time,
             )
         else:
             q &= (
                 # 당일 저녁 (06:00 ~ 23:59)
                 Q(
-                    restaurantopertime__open_time__lte=open_time,
+                    restaurantopertime__open_time__gte=open_time,
                 )
                 |
                 # 익일 새벽 (00:00 ~ 05:59)
                 Q(
-                    restaurantopertime__close_time__gte=close_time,
+                    restaurantopertime__close_time__lte=close_time,
                 )
             )
     qs = qs.filter(q)   # 필터
