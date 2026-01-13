@@ -5,4 +5,5 @@ app_name = 'restaurants'
 urlpatterns = [
     path('reslist/', views.reslist, name='reslist'),
     path('resview/<int:resno>/', views.resview, name='resview'),
+    path('respromo/', views.respromo, name='respromo'),
 ]

@@ -6,7 +6,7 @@
 
 {% comment %} script 작업은 여기서 하세요!! {% endcomment %}
 {% block script %}
-<link rel='stylesheet' href="/static/js/restaurants.js">
+<script src="/static/js/resview.js"></script>
 {% endblock script %}
 
 {% comment %} body 작업은 여기서 하세요!! {% endcomment %}
@@ -16,12 +16,23 @@
     <!-- 상단 이미지 영역 -->
     <section class="image-section">
         <div class="image-main">
-            <img src="https://picsum.photos/600/400" alt="대표 이미지">
+            {% if main_image %}
+                <img src="{{ main_image.image.url }}" alt="대표 이미지" width="600" height="400">
+            {% else %}
+                <img src="https://picsum.photos/600/400?{{ view.resno }}" alt="대표 이미지" width="600" height="400">
+            {% endif %}
         </div>
         <div class="image-sub">
-            <img src="https://picsum.photos/200/130?1">
-            <img src="https://picsum.photos/200/130?2">
-            <img src="https://picsum.photos/200/130?3">
+            {% if sub_images %}
+                {% for img in sub_images %}
+                <img src="{{ img.image.url }}" width="200" height="130" alt="서브 이미지">
+                {% endfor %}
+            {% else %}
+                {# 식당 이미지가 아예 없거나 / 대표만 있고 서브가 없을 때 placeholder #}
+                <img src="https://picsum.photos/200/130?{{ view.resno }}-1" width="200" height="130" alt="서브 이미지">
+                <img src="https://picsum.photos/200/130?{{ view.resno }}-2" width="200" height="130" alt="서브 이미지">
+                <img src="https://picsum.photos/200/130?{{ view.resno }}-3" width="200" height="130" alt="서브 이미지">
+            {% endif %}
         </div>
     </section>
     
@@ -74,7 +85,34 @@
                 // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
                 // marker.setMap(null);    
             </script>
-            
+        
+            <!-- 리뷰 영역 -->
+            <section class="review-section">
+                <h2>방문자 리뷰</h2>
+
+                <!-- 리뷰 요약 & 정렬 -->
+                <div class="review-summary">
+                    <div class="summary-left">
+                        <span class="avg-rating">
+                            ⭐ <strong id="avgRating">{{ avg_rating }}</strong>
+                        </span>
+                        <span class="review-count">
+                            (리뷰 <strong id="reviewCount">{{ review_count }}</strong>개)
+                        </span>
+                    </div>
+
+                    <div class="summary-right">
+                        <button class="sort-btn active" data-sort="latest">최신순</button>
+                        <button class="sort-btn" data-sort="rating">별점순</button>
+                    </div>
+                </div>
+                
+                <div class="review-grid" id='reviewGrid'>
+                    <!-- 리뷰 카드 -->
+                    {% include "restaurants/review_list_partial.html" %}
+                </div>
+
+            </section>
         </div>
 
         <!-- 오른쪽 -->
@@ -91,7 +129,6 @@
                     {% endfor %}
                 </p>
                 <div class="button-group">
-                    <button class="reserve-btn">예약하기</button>
                     <button class="review-btn">후기작성</button>
                 </div>
             </div>
@@ -104,4 +141,39 @@
 <div class="back-button-wrapper">
     <button class="back-btn" onclick="history.back()">뒤로가기</button>
 </div>
+
+<!-- 후기 작성 모달 -->
+<div class="review-modal" id="reviewModal">
+    <div class="modal-content">
+        <h3>후기 작성</h3>
+        <!-- 별점 -->
+        <div class="star-rating">
+            <span data-value="1">⭐</span>
+            <span data-value="2">⭐</span>
+            <span data-value="3">⭐</span>
+            <span data-value="4">⭐</span>
+            <span data-value="5">⭐</span>
+        </div>
+        
+        <!-- 후기 내용 -->
+        <input type="hidden" id="restaurantId" value="{{ view.resno }}">
+        <textarea id="reviewText" placeholder="후기를 작성해주세요."></textarea>
+
+        <!-- 이미지 업로드 -->
+        <label class="image-upload">
+            📷 사진 첨부
+            <input type="file" id="reviewImages" multiple accept="image/*" hidden>
+        </label>
+        
+        <div class="image-preview" id="imagePreview"></div>
+
+        <!-- 버튼 -->
+        <div class="modal-buttons">
+            <button class="cancel-btn" id="closeModal">취소</button>
+            <button class="submit-btn" id="submitReview">등록</button>
+        </div>
+    </div>
+</div>
+
+
 {% endblock body %}

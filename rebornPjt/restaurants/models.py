@@ -1,5 +1,6 @@
 from django.db import models
 from member.models import MyUser
+from django.db.models import Q
 
 class Location(models.Model):
     locno = models.AutoField(primary_key=True)
@@ -117,39 +118,23 @@ class Comment(models.Model):
     def __str__(self):
         return f"{self.cno},{self.ccontent},{self.rating},{self.date}"
 
+def restaurant_image_path(instance, filename):
+    return f"restaurant_image/{instance.restaurant_id}/{filename}"
 
-## test용 table        
-# class Restaurant(models.Model):
-#     resno=models.AutoField(primary_key=True)
-#     locno=models.IntegerField(default=0)
-#     res_name=models.CharField(max_length=50,null=True)
-#     desc=models.TextField(null=True)
-#     addr=models.CharField(max_length=200,null=True)
-#     tel=models.CharField(max_length=13,null=True)
-#     lat=models.DecimalField(max_digits=10,decimal_places=7,default=0)
-#     lng=models.DecimalField(max_digits=10,decimal_places=7,default=0)
-#     date=models.DateTimeField(auto_now=True)
-#     mem_id=models.CharField(max_length=25,null=True)
-    
-#     def __str__(self):
-#         return f"{self.resno},{self.res_name},{self.tel},{self.mem_id}"
-    
-# class RestaurantOperTime(models.Model):
-#     opno = models.AutoField(primary_key=True)
-#     resno = models.ForeignKey(Restaurant, on_delete=models.SET_NULL, null=True, blank=True)
-#     week = models.CharField(max_length=50, null=True)# 오픈 요일
-#     open_time = models.TimeField(null=True)# 오픈 시간
-#     close_time = models.TimeField(null=True)# 종료 시간
+class RestaurantImage(models.Model):
+    r_img_no = models.AutoField(primary_key=True)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to=restaurant_image_path)
+    is_main = models.BooleanField(default=False)
 
-#     def __str__(self):
-#         return f"{self.opno},{self.resno_id},{self.week},{self.open_time},{self.close_time}"
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["restaurant"],
+                condition=Q(is_main=True),
+                name="uniq_main_image_per_restaurant",
+            )
+        ]
 
-
-# class FoodMenu(models.Model):
-#     fno = models.AutoField(primary_key=True)
-#     resno = models.ForeignKey(Restaurant, on_delete=models.SET_NULL, null=True, blank=True)
-#     price = models.IntegerField(default=0)# 음식 가격
-#     fnm = models.CharField(max_length=100, null=True)# 음식 이름
-
-#     def __str__(self):
-#         return f"{self.fno},{self.fnm},{self.price}"
+    def __str__(self):
+        return f"{self.restaurant.res_name} | {self.image} | main={self.is_main}"
