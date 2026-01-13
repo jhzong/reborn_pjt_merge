@@ -15,6 +15,7 @@ def index(request):
     id = request.session.get('user_id')
     res_qs = []
     res_list = []
+    max_cnt = 6;
     if id:
         member_qs = MyUser.objects.filter(mem_id=id).first()
         if member_qs and member_qs.food_cat:
@@ -33,8 +34,8 @@ def index(request):
                 if res:
                     res_list.append(res)
                     used_res_ids.add(res.resno)
-            # 다섯개 미만이면 채워넣기
-            if len(res_list) < 5:
+            # 여섯개 미만이면 채워넣기
+            if len(res_list) < max_cnt:
                 extra_qs = (
                     Restaurant.objects
                     .filter(
@@ -54,7 +55,7 @@ def index(request):
 
                 for res in extra_qs:
                     res_list.append(res)
-                    if len(res_list) >= 5:
+                    if len(res_list) >= max_cnt:
                         break
             res_qs = res_list
             for res in res_qs:
