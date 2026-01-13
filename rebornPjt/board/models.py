@@ -31,7 +31,7 @@ class Post(models.Model):
     # 맛집 세부 주제를 저장할 필드 추가
     topic = models.CharField(max_length=20, null=True, blank=True)
     
-    is_notice = models.BooleanField(default=False)  # 상단 고정 여부
+    is_notice = models.BooleanField(default=False, null=True)  # 상단 고정 여부
     # 만약 아주 세밀하게 순서를 바꾸고 싶다면 정수형 필드 추가
     # priority = models.IntegerField(default=0)
     class Meta:
