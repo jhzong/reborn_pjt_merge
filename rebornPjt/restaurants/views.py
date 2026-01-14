@@ -46,19 +46,23 @@ def reslist(request):
         is_overnight = open_time > close_time
         if not is_overnight:
             q &= Q(
-                restaurantopertime__open_time__gte=open_time,
-                restaurantopertime__close_time__lte=close_time,
+                restaurantopertime__open_time__lte=open_time,   # 오픈시간보다 UI쪽 슬라이더 검색조건 안쪽으로(UI에 가격 슬라이더 조건과 혼동될 수 있어서 주의)
+                restaurantopertime__close_time__gte=close_time,
+                # restaurantopertime__open_time__gte=open_time,       # 오픈시간보다 UI쪽 슬라이더 검색조건 바깥으로
+                # restaurantopertime__close_time__lte=close_time,
             )
         else:
             q &= (
                 # 당일 저녁 (06:00 ~ 23:59)
                 Q(
-                    restaurantopertime__open_time__gte=open_time,
+                    restaurantopertime__open_time__lte=open_time,
+                    # restaurantopertime__open_time__gt=open_time,
                 )
                 |
                 # 익일 새벽 (00:00 ~ 05:59)
                 Q(
-                    restaurantopertime__close_time__lte=close_time,
+                    restaurantopertime__close_time__gte=close_time,
+                    # restaurantopertime__close_time__lt=close_time,
                 )
             )
     qs = qs.filter(q)   # 필터
@@ -67,7 +71,7 @@ def reslist(request):
     price_max = request.GET.get('price_max')
     if price_min and price_max:
         qs = qs.annotate(
-            min_price=Min('foodmenu__price'),
+            min_price=Min('foodmenu__price'),       # 음식들중 제일 낮은가격
             max_price=Max('foodmenu__price'),
         ).filter(
             min_price__gte=price_min,
