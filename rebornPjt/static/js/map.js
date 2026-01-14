@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log("게시판 스크립트 로드 완료");
     

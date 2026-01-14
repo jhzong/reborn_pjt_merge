@@ -1,3 +1,4 @@
+
 /**
  * 게시판 상세보기 통합 스크립트 (확대/축소 + 토글 + 파일명)
  */
@@ -33,7 +34,7 @@ function toggleReply(id) {
     // 1. 로그인 체크
     if (!isUserLoggedIn) {
         if (confirm("로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?")) {
-            location.href = "{% url 'member:login' %}"; // 프로젝트의 로그인 URL로 변경
+            location.href = loginUrl; // 프로젝트의 로그인 URL로 변경
         }
         return;
     }

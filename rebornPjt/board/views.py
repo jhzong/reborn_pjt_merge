@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.core.paginator import Paginator
@@ -189,26 +190,28 @@ def bdelete(request, bno):
 
 
 def comment_write(request, bno):
+    # ✅ 비로그인 작성 차단 → 로그인 페이지로
+    if not request.session.get('user_nm'):
+        return redirect('member:login')
+
     if request.method == "POST":
         post = get_object_or_404(Post, id=bno)
         content = request.POST.get('content')
-        author = request.session.get('user_nm', '익명')
+        author = request.session.get('user_nm')
         parent_id = request.POST.get('parent_id')
-        
-        # ⭐ 사진 파일 가져오기
         image = request.FILES.get('image')
 
         if content:
             comment = Comment(
-                post=post, 
-                content=content, 
+                post=post,
+                content=content,
                 author=author,
-                image=image  # ⭐ 이미지 저장
+                image=image
             )
             if parent_id:
                 comment.parent = Comment.objects.get(id=parent_id)
             comment.save()
-            
+
     return redirect('board:bview', bno=bno)
 
 # 댓글 수정 (사진 수정 기능 추가)
@@ -379,14 +382,28 @@ def map(request):
     search_kw = request.GET.get('search', '')
     sort = request.GET.get('sort', 'recent') # 정렬 파라미터
 
-    # 4. 주제 및 검색어 필터링
-    if topic_filter:
-        all_posts = all_posts.filter(topic=topic_filter)
+    # 4. 주제(topic) 필터링 (문자열/숫자 호환)
+    TOPIC_ALIASES = {
+        "free": ["free", "0"],
+        "hidden_gem": ["hidden_gem", "1"],
+        "report": ["report", "2"],
+        "family": ["family", "3"],
+        "honey_tip": ["honey_tip", "4"],
+    }
 
-    if search_kw:
-        all_posts = all_posts.filter(
-            Q(title__icontains=search_kw) | Q(content__icontains=search_kw)
-        ).distinct()
+    if topic_filter:
+        # 버튼은 보통 free/hidden_gem/... 으로 들어오고
+        # 기존 데이터가 0/1/... 로 저장된 경우도 함께 매칭되게 처리
+        if topic_filter in TOPIC_ALIASES:
+            all_posts = all_posts.filter(topic__in=TOPIC_ALIASES[topic_filter])
+        else:
+            # 혹시 직접 숫자(0~4)로 들어오는 경우도 대비
+            all_posts = all_posts.filter(topic=topic_filter)
+
+        if search_kw:
+            all_posts = all_posts.filter(
+                Q(title__icontains=search_kw) | Q(content__icontains=search_kw)
+            ).distinct()
 
     # 5. 정렬 처리 (페이징 직전에 수행해야 함)
     if sort == 'likes':

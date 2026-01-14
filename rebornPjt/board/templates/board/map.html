@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 {% load static %} {% block css %}
 <link rel='stylesheet' href="{% static 'css/map.css' %}">
@@ -64,11 +65,12 @@
             <div class="post-item"> <div class="post-info">
                     <div class="post-content">
                         <span class="topic-tag">
-                            {% if post.topic == 'free' %} [추천]
-                            {% elif post.topic == 'hidden_gem' %} [숨은맛집]
-                            {% elif post.topic == 'report' %} [핫플]
-                            {% elif post.topic == 'family' %} [모임]
-                            {% elif post.topic == 'honey_tip' %} [데이트]
+                        
+                            {% if post.topic == 'free' or post.topic == '0' %} [추천]
+                            {% elif post.topic == 'hidden_gem' or post.topic == '1' %} [숨은맛집]
+                            {% elif post.topic == 'report' or post.topic == '2' %} [핫플]
+                            {% elif post.topic == 'family' or post.topic == '3' %} [가족/회식]
+                            {% elif post.topic == 'honey_tip' or post.topic == '4' %} [데이트]
                             {% endif %}
                         </span>
                         <a href="{% url 'board:bview' post.id %}" class="post-title">{{ post.title }}</a>
