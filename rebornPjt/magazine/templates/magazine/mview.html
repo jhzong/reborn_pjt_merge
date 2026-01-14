@@ -27,7 +27,11 @@ $(function(){
                 if(data.like_chk == '1'){
                     dataHtml = `<i class="fa-solid fa-heart mz-red"></i> ${data.like_count}`;
                 }else{
-                    dataHtml = `<i class="fa-regular fa-heart"></i> ${data.like_count}`;
+                    if (data.like_count > 0){
+                        dataHtml = `<i class="fa-solid fa-heart mz-red"></i> ${data.like_count}`;
+                    }else{
+                        dataHtml = `<i class="fa-regular fa-heart"></i> ${data.like_count}`;
+                    }
                 }
 
                 $('#mz-like').html(dataHtml);

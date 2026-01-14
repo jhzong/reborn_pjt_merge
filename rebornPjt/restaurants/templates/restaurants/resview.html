@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load humanize %}
+
 {% comment %} css 작업은 여기서 하세요!! {% endcomment %}
 {% block css %}
 <link rel='stylesheet' href="/static/css/resview.css">
@@ -52,7 +54,7 @@
                 {% for m in menu %}
                 <li>
                     <span>{{m.fnm}}</span>
-                    <span>₩{{m.price}}</span>
+                    <span>₩{{m.price|intcomma}}</span>
                 </li>
                 {% empty %}
                 <li>등록된 메뉴가 없습니다.</li>
