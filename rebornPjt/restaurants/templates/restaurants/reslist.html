@@ -48,9 +48,9 @@
 
 <!-- 슬라이더 상단 우측 프로모션 등록 버튼 -->
 <div class="promo-header">
-  <a href="/promo/admin/" class="promo-btn-link">
-    프로모션 등록
-  </a>
+    {% if request.session.user_id == 'admin' %}
+        <a href="/promo/admin/" class="promo-btn-link">프로모션 등록</a>
+    {% endif %}
 </div>
 
 <!-- ✅ 광고 슬라이더 START -->

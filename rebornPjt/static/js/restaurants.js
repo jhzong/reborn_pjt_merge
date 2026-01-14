@@ -1,5 +1,4 @@
 function searchBtn(){
-    alert('검색버튼 클릭됨');
     searchFrm.submit();
 }//searchBtn()
 
