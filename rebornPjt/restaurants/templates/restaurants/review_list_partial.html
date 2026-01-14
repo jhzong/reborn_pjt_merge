@@ -16,7 +16,9 @@
         {% for img in r.images.all %}
             <div class="existing-image" data-image-id="{{ img.ino }}">
                 <img src="{{ img.image.url }}">
+                {% if login_user_id == r.member.mem_id %}
                 <button type="button" class="remove-existing-img">×</button>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
