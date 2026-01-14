@@ -45,7 +45,7 @@
 .mz_litem figure{border-bottom: 1px solid #d3d3d3;}
 .mz_litem figcaption{padding:15px 8px 12px;}
 .mz_litem-category{font-family: SUIT, sans-serif;font-size: 14px;font-weight: 400;line-height: 150%;color: #3e404e;margin-bottom: 0;}
-.mz_litem-title{overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-box-orient: vertical;text-decoration: none;font-family: SUIT, sans-serif;font-size: 18px;font-weight: 600;line-height: normal;height: 24px;color: #3e404e;margin: 12px 0px;}
+.mz_litem-title{overflow: hidden;text-overflow: ellipsis;white-space: nowrap;text-decoration: none;font-family: SUIT, sans-serif;font-size: 18px;font-weight: 600;line-height: normal;height: 24px;color: #3e404e;margin: 12px 0px;}
 .mz_litem-thumbnail{height: 66px;overflow: hidden;text-overflow: ellipsis;line-height: 150%;color: #585a74;font-family: SUIT, sans-serif;font-size: 14px;font-weight: 400;margin: 0 0 17px;}
 .mz_litem-date{display: block;color: #9d9d9d;font-size: 12px;line-height: 1.5;}
 
