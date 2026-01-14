@@ -203,6 +203,10 @@ document.addEventListener("DOMContentLoaded", () => {
             <p class="review-content">${r.content}</p>
             ${imagesHTML}
             <div class="review-date">${r.date}</div>
+            <div class="review-actions">
+                <button class="edit-review-btn">수정</button>
+                <button class="delete-review-btn">삭제</button>
+            </div>
         `;
 
         grid.prepend(card);
