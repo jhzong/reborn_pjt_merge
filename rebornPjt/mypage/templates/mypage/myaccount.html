@@ -21,6 +21,7 @@
                 <li class="active"><a href="/mypage/myaccount/">계정관리</a></li>
                 {% if request.session.user_id == 'admin' %}
                     <li><a href="/magazine/mmnge/">매거진관리</a></li>
+                    <li><a href="/promo/admin/">프로모션관리</a></li>
                 {% endif %}                
             </ul>
         </aside>

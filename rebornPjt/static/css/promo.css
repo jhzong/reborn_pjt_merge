@@ -176,3 +176,10 @@
 @media (max-width: 900px){
   .promo-admin-wrap{ grid-template-columns: 1fr; }
 }
+
+/* 마이페이지 content-card 안에서 프로모션 UI가 잘 보이게 */
+.content-card.promo-content{
+  max-width: 1000px;     /* 필요하면 1100~1200으로 */
+  padding: 28px;
+  display: block;        /* 기존 myaccount.css의 flex 중앙정렬 해제 */
+}
